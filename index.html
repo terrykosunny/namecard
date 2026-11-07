@@ -24,10 +24,11 @@
     }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* 화면에 실제로 보이는 영역에 고정 → 삼성 인터넷 등 툴바 높이 계산 차이와 무관하게 중앙 정렬 */
   body {
-    min-height: 100vh;
-    min-height: 100dvh; /* 모바일 주소창을 제외한 실제 보이는 높이 */
-    display: flex; align-items: center; justify-content: center;
+    position: fixed; inset: 0;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    display: flex;
     padding: 24px 16px;
     background: var(--bg);
     font-family: "Noto Sans KR", system-ui, sans-serif;
@@ -35,6 +36,7 @@
   }
   .card {
     width: 100%; max-width: 420px;
+    margin: auto; /* 가로·세로 중앙, 화면보다 길면 위에서부터 스크롤 */
     background: var(--card);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(40, 30, 10, .12);
