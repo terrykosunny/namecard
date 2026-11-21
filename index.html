@@ -26,7 +26,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   /* 화면에 실제로 보이는 영역에 고정 → 삼성 인터넷 등 툴바 높이 계산 차이와 무관하게 중앙 정렬 */
   body {
-    position: fixed; inset: 0;
+    position: fixed; inset: 0; overflow-x: hidden;
     overflow-y: auto; -webkit-overflow-scrolling: touch;
     display: flex;
     padding: 24px 16px;
@@ -101,6 +101,43 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .actions { display: flex; gap: 10px; padding: 6px 28px 28px; }
+
+  /* ── 키네틱 효과 ── */
+  .card {
+    position: relative;
+    --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 0%; --glow: 0;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+    will-change: transform;
+    animation: card-in .8s cubic-bezier(.2, .8, .2, 1) backwards;
+  }
+  .card::after { /* 기울기를 따라 움직이는 빛 반사 */
+    content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, .55), transparent 55%);
+    opacity: var(--glow); mix-blend-mode: soft-light; transition: opacity .4s;
+  }
+  @keyframes card-in { from { opacity: 0; transform: perspective(900px) translateY(40px) rotateX(12deg) scale(.95); } }
+
+  .reveal { animation: rise .6s cubic-bezier(.2, .8, .2, 1) backwards; animation-delay: calc(.25s + var(--i, 0) * .08s); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+  .top::before { transform-origin: left; animation: bar .7s .15s cubic-bezier(.6, 0, .2, 1) backwards; }
+  @keyframes bar { from { transform: scaleX(0); } }
+
+  .weather-ico { display: inline-block; animation: bob 3.2s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-3px) rotate(-6deg); } }
+
+  .ico { transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+  .info a:hover .ico, .info a:active .ico { transform: scale(1.12) rotate(-8deg); }
+  .btn { transition: transform .18s cubic-bezier(.3, 1.6, .5, 1), filter .15s; }
+  .btn:active { transform: scale(.95); }
+
+  .quote-msg, .quote-by { transition: opacity .25s, transform .25s; }
+  .quote.swap .quote-msg, .quote.swap .quote-by { opacity: 0; transform: translateY(6px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .card { transform: none !important; }
+    .card::after { display: none; }
+  }
   .btn {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
     height: 46px; border-radius: 12px; border: 0; cursor: pointer;
@@ -122,26 +159,26 @@
 <body>
   <main class="card">
     <section class="top">
-      <div class="weather" id="weather" hidden><span class="weather-ico" id="weatherIco"></span><span id="weatherTemp"></span></div>
-      <img class="logo" src="kb_logo.png" alt="KB국민은행">
-      <h1 class="name" id="name">나윤정</h1>
-      <p class="title"><b>팀장</b> · 국민은행</p>
+      <div class="weather reveal" style="--i:1" id="weather" hidden><span class="weather-ico" id="weatherIco"></span><span id="weatherTemp"></span></div>
+      <img class="logo reveal" style="--i:0" src="kb_logo.png" alt="KB국민은행">
+      <h1 class="name reveal" style="--i:1" id="name">나윤정</h1>
+      <p class="title reveal" style="--i:2"><b>팀장</b> · 국민은행</p>
     </section>
 
     <ul class="info">
-      <li>
+      <li class="reveal" style="--i:3">
         <a href="tel:01030089888">
           <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>
           <span><span class="label">휴대전화</span><br><span class="value">010-3008-9888</span></span>
         </a>
       </li>
-      <li>
+      <li class="reveal" style="--i:4">
         <a href="mailto:1907598@kbfg.com">
           <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
           <span><span class="label">이메일</span><br><span class="value">1907598@kbfg.com</span></span>
         </a>
       </li>
-      <li>
+      <li class="reveal" style="--i:5">
         <a href="https://map.naver.com/p/search/경기 시흥시 장현능곡로 155" target="_blank" rel="noopener">
           <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
           <span><span class="label">주소</span><br><span class="value">경기 시흥시 장현능곡로 155, 1층</span></span>
@@ -149,13 +186,13 @@
       </li>
     </ul>
 
-    <figure class="quote" id="quote" hidden>
+    <figure class="quote reveal" style="--i:6" id="quote" hidden>
       <button class="quote-next" id="quoteNext" aria-label="다른 명언 보기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/></svg></button>
       <blockquote class="quote-msg" id="quoteMsg"></blockquote>
       <figcaption class="quote-by">— <span id="quoteAuthor"></span><small id="quoteProfile"></small></figcaption>
     </figure>
 
-    <div class="actions">
+    <div class="actions reveal" style="--i:7">
       <button class="btn primary" id="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>연락처 저장</button>
       <button class="btn ghost" id="share">명함 공유</button>
     </div>
@@ -222,10 +259,16 @@
       if (!res.ok) throw new Error(res.status);
       const q = await res.json();
       if (!q.message) throw new Error('empty');
+      const box = document.getElementById('quote');
+      if (!box.hidden) { // 바뀔 때 살짝 사라졌다 나타나기
+        box.classList.add('swap');
+        await new Promise(r => setTimeout(r, 250));
+      }
       document.getElementById('quoteMsg').textContent = q.message;
       document.getElementById('quoteAuthor').textContent = q.author || '작자 미상';
       document.getElementById('quoteProfile').textContent = q.authorProfile ? ' (' + q.authorProfile + ')' : '';
-      document.getElementById('quote').hidden = false;
+      box.hidden = false;
+      box.classList.remove('swap');
     } catch (e) {
       // 명언을 불러오지 못하면 영역을 숨긴 채 명함만 보여줌
     } finally {
@@ -234,6 +277,45 @@
   };
   quoteNext.onclick = loadQuote;
   loadQuote();
+
+  // 3D 기울기: 마우스·터치 위치 또는 휴대폰 기울기를 따라 카드가 부드럽게 움직임
+  (() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const card = document.querySelector('.card');
+    const MAX = 8; // 최대 기울기(도)
+    let tx = 0, ty = 0, cx = 0, cy = 0, glow = 0, tglow = 0, running = false, base = null;
+
+    const set = (x, y, g) => { tx = Math.max(-1, Math.min(1, x)); ty = Math.max(-1, Math.min(1, y)); tglow = g; kick(); };
+    const kick = () => { if (!running) { running = true; requestAnimationFrame(step); } };
+    const step = () => {
+      cx += (tx - cx) * .12; cy += (ty - cy) * .12; glow += (tglow - glow) * .12; // 스프링처럼 따라감
+      card.style.setProperty('--ry', (cx * MAX).toFixed(2) + 'deg');
+      card.style.setProperty('--rx', (-cy * MAX).toFixed(2) + 'deg');
+      card.style.setProperty('--mx', (50 + cx * 50).toFixed(1) + '%');
+      card.style.setProperty('--my', (50 + cy * 50).toFixed(1) + '%');
+      card.style.setProperty('--glow', glow.toFixed(3));
+      if (Math.abs(tx - cx) + Math.abs(ty - cy) + Math.abs(tglow - glow) > .002) requestAnimationFrame(step);
+      else running = false;
+    };
+
+    const fromPointer = e => {
+      const r = card.getBoundingClientRect();
+      set(((e.clientX - r.left) / r.width - .5) * 2, ((e.clientY - r.top) / r.height - .5) * 2, 1);
+    };
+    card.addEventListener('pointermove', fromPointer);
+    card.addEventListener('pointerdown', fromPointer);
+    const reset = () => set(0, 0, 0);
+    card.addEventListener('pointerleave', reset);
+    card.addEventListener('pointercancel', reset); // 터치 스크롤로 넘어갈 때
+    card.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') reset(); });
+
+    // 휴대폰 기울기(권한 요청이 필요 없는 안드로이드 등에서 동작)
+    addEventListener('deviceorientation', e => {
+      if (e.beta == null || e.gamma == null) return;
+      if (!base) base = { b: e.beta, g: e.gamma }; // 처음 잡은 자세를 기준으로
+      set((e.gamma - base.g) / 20, (e.beta - base.b) / 20, .7);
+    });
+  })();
 
   document.getElementById('share').onclick = async () => {
     const url = location.href;
