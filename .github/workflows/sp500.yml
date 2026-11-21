@@ -1,6 +1,6 @@
-# FRED에서 S&P 500 종가를 받아 sp500.json으로 저장 → 명함 페이지가 같은 사이트에서 읽음
+# FRED에서 S&P 500·VIX 종가를 받아 sp500.json·vix.json으로 저장 → 명함 페이지가 같은 사이트에서 읽음
 # (FRED는 브라우저 직접 호출을 막고, 키를 공개 페이지에 둘 수 없어서 이렇게 처리)
-name: S&P 500 업데이트
+name: 지수 업데이트 (S&P 500, VIX)
 
 on:
   schedule:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: FRED에서 최근 S&P 500 받기
+      - name: FRED에서 최근 지수 받기 (S&P 500, VIX)
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
@@ -28,30 +28,31 @@ jobs:
           if [ -z "${FRED_API_KEY:-}" ]; then echo "FRED_API_KEY 비밀값이 없습니다"; exit 1; fi
           START=$(date -u -d '21 days ago' +%F)
           END=$(date -u +%F)
-          curl -sf --retry 3 -o raw.json \
-            "https://api.stlouisfed.org/fred/series/observations?series_id=SP500&api_key=${FRED_API_KEY}&file_type=json&observation_start=${START}&observation_end=${END}"
-          # 값이 "."(휴장 등)인 날은 빼고 마지막 두 거래일로 등락 계산
-          jq '[.observations[] | select(.value != ".") | {date, value: (.value | tonumber)}] as $o
-              | if ($o | length) < 2 then error("데이터 부족") else . end
-              | ($o[-1]) as $now | ($o[-2]) as $prev
-              | {
-                  date: $now.date,
-                  value: $now.value,
-                  prev: $prev.value,
-                  change: (($now.value - $prev.value) * 100 | round / 100),
-                  changePct: ((($now.value - $prev.value) / $prev.value * 10000) | round / 100),
-                  source: "FRED SP500"
-                }' raw.json > sp500.json
-          rm raw.json
-          cat sp500.json
+          fetch() { # $1=FRED 시리즈, $2=저장 파일
+            curl -sf --retry 3 -o raw.json               "https://api.stlouisfed.org/fred/series/observations?series_id=$1&api_key=${FRED_API_KEY}&file_type=json&observation_start=${START}&observation_end=${END}"
+            # 값이 "."(휴장 등)인 날은 빼고 마지막 두 거래일로 등락 계산
+            jq --arg src "FRED $1" '[.observations[] | select(.value != ".") | {date, value: (.value | tonumber)}] as $o
+                | if ($o | length) < 2 then error("데이터 부족") else . end
+                | ($o[-1]) as $now | ($o[-2]) as $prev
+                | {
+                    date: $now.date,
+                    value: $now.value,
+                    prev: $prev.value,
+                    change: (($now.value - $prev.value) * 100 | round / 100),
+                    changePct: ((($now.value - $prev.value) / $prev.value * 10000) | round / 100),
+                    source: $src
+                  }' raw.json > "$2"
+            rm raw.json
+            cat "$2"
+          }
+          fetch SP500 sp500.json
+          fetch VIXCLS vix.json
 
       - name: 바뀌었으면 커밋
         run: |
-          if git diff --quiet -- sp500.json && git ls-files --error-unmatch sp500.json >/dev/null 2>&1; then
-            echo "변경 없음"; exit 0
-          fi
+          git add sp500.json vix.json
+          if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sp500.json
-          git commit -m "S&P 500 종가 갱신 ($(jq -r .date sp500.json))"
+          git commit -m "지수 종가 갱신 (S&P 500 $(jq -r .date sp500.json), VIX $(jq -r .date vix.json))"
           git push
