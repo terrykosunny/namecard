@@ -81,7 +81,7 @@
   .quote[hidden] { display: none; }
   .quote-msg { font-size: 15px; line-height: 1.6; word-break: keep-all; padding-right: 28px; }
   .quote-by { margin-top: 10px; font-size: 13px; color: var(--kb-gray); font-weight: 500; }
-  .quote-by small { display: block; margin-top: 2px; font-size: 12px; color: var(--muted); font-weight: 400; }
+  .quote-by small { font-size: 12px; color: var(--muted); font-weight: 400; }
   .quote-next {
     position: absolute; top: 12px; right: 12px;
     width: 30px; height: 30px; border: 0; border-radius: 50%;
@@ -189,7 +189,7 @@
       if (!q.message) throw new Error('empty');
       document.getElementById('quoteMsg').textContent = q.message;
       document.getElementById('quoteAuthor').textContent = q.author || '작자 미상';
-      document.getElementById('quoteProfile').textContent = q.authorProfile || '';
+      document.getElementById('quoteProfile').textContent = q.authorProfile ? ' (' + q.authorProfile + ')' : '';
       document.getElementById('quote').hidden = false;
     } catch (e) {
       // 명언을 불러오지 못하면 영역을 숨긴 채 명함만 보여줌
