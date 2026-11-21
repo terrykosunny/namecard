@@ -1,0 +1,57 @@
+# FRED에서 S&P 500 종가를 받아 sp500.json으로 저장 → 명함 페이지가 같은 사이트에서 읽음
+# (FRED는 브라우저 직접 호출을 막고, 키를 공개 페이지에 둘 수 없어서 이렇게 처리)
+name: S&P 500 업데이트
+
+on:
+  schedule:
+    - cron: "17 0,6,12,18 * * *" # 하루 4번 (FRED는 하루 한 번 전날 종가를 올림)
+  workflow_dispatch: {}          # Actions 탭에서 수동 실행
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sp500
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: FRED에서 최근 S&P 500 받기
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${FRED_API_KEY:-}" ]; then echo "FRED_API_KEY 비밀값이 없습니다"; exit 1; fi
+          START=$(date -u -d '21 days ago' +%F)
+          END=$(date -u +%F)
+          curl -sf --retry 3 -o raw.json \
+            "https://api.stlouisfed.org/fred/series/observations?series_id=SP500&api_key=${FRED_API_KEY}&file_type=json&observation_start=${START}&observation_end=${END}"
+          # 값이 "."(휴장 등)인 날은 빼고 마지막 두 거래일로 등락 계산
+          jq '[.observations[] | select(.value != ".") | {date, value: (.value | tonumber)}] as $o
+              | if ($o | length) < 2 then error("데이터 부족") else . end
+              | ($o[-1]) as $now | ($o[-2]) as $prev
+              | {
+                  date: $now.date,
+                  value: $now.value,
+                  prev: $prev.value,
+                  change: (($now.value - $prev.value) * 100 | round / 100),
+                  changePct: ((($now.value - $prev.value) / $prev.value * 10000) | round / 100),
+                  source: "FRED SP500"
+                }' raw.json > sp500.json
+          rm raw.json
+          cat sp500.json
+
+      - name: 바뀌었으면 커밋
+        run: |
+          if git diff --quiet -- sp500.json && git ls-files --error-unmatch sp500.json >/dev/null 2>&1; then
+            echo "변경 없음"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sp500.json
+          git commit -m "S&P 500 종가 갱신 ($(jq -r .date sp500.json))"
+          git push
