@@ -74,6 +74,8 @@
   .name { font-size: 40px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; }
   .role { margin-top: 10px; font-size: 16px; color: var(--sub); }
   .role strong { color: var(--ink); font-weight: 600; }
+  .certs { list-style: none; display: flex; align-items: center; gap: 18px; margin-top: 22px; }
+  .certs img { display: block; height: 34px; width: auto; }
 
   /* ── 연락처: 내용 + 오른쪽 동작 아이콘 ── */
   .contacts { list-style: none; margin: 0 24px; border-top: 1px solid var(--line); }
@@ -194,6 +196,11 @@
       <section class="who">
         <h1 class="name" id="name">나윤정</h1>
         <p class="role">시흥능곡지점 <strong>VIP팀장</strong></p>
+        <ul class="certs" aria-label="보유 자격">
+          <li><img src="cert_cfp.png" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
+          <li><img src="cert_afpk.png" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
+          <li><img src="cert_arps.png" alt="ARPS" title="ARPS 은퇴설계전문가" width="54" height="54"></li>
+        </ul>
       </section>
 
       <ul class="contacts">
@@ -259,6 +266,7 @@
       'BEGIN:VCARD', 'VERSION:3.0',
       'FN:' + name, 'N:' + name + ';;;;',
       'ORG:KB국민은행;시흥능곡지점', 'TITLE:VIP팀장',
+      'NOTE:보유 자격 CFP\\, AFPK\\, ARPS',
       'TEL;TYPE=CELL:010-3008-9888',
       'EMAIL;TYPE=WORK:1907598@kbfg.com',
       'ADR;TYPE=WORK:;;장현능곡로 155, 1층;시흥시;경기도;;대한민국',
