@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
+<meta name="build" content="2026-11-21.1">
 <title>나윤정 VIP팀장 · KB국민은행 시흥능곡지점</title>
 <meta name="description" content="KB국민은행 시흥능곡지점 VIP팀장 나윤정의 명함입니다. 전화 걸기, 연락처 저장, 지점 위치를 바로 확인할 수 있습니다.">
 <link rel="canonical" href="https://terrykosunny.github.io/namecard/">
@@ -71,11 +72,11 @@
   .weather svg { width: 18px; height: 18px; }
 
   .who { padding: 44px 24px 36px; }
-  .name { font-size: 40px; line-height: 1.15; font-weight: 700; letter-spacing: -.02em; }
+  .name { font-size: 40px; line-height: 1.15; font-weight: 700; letter-spacing: .3em; margin-right: -.3em; }
   .role { margin-top: 10px; font-size: 16px; color: var(--sub); }
   .role strong { color: var(--ink); font-weight: 600; }
-  .certs { list-style: none; display: flex; align-items: center; gap: 18px; margin-top: 22px; }
-  .certs img { display: block; height: 34px; width: auto; }
+  .certs { list-style: none; display: flex; align-items: center; gap: 16px; margin-top: 22px; }
+  .certs img { display: block; width: 56px; height: auto; } /* 세 로고 가로 길이 동일 */
 
   /* ── 연락처: 내용 + 오른쪽 동작 아이콘 ── */
   .contacts { list-style: none; margin: 0 24px; border-top: 1px solid var(--line); }
@@ -141,37 +142,6 @@
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  /* ── 공유 시트 ── */
-  .sheet-bg { position: fixed; inset: 0; z-index: 20; background: rgba(20, 16, 10, .45); opacity: 0; transition: opacity .25s; }
-  .sheet {
-    position: fixed; left: 50%; bottom: 0; z-index: 21;
-    width: 100%; max-width: 480px; transform: translate(-50%, 100%);
-    padding: 10px 20px calc(24px + env(safe-area-inset-bottom));
-    background: var(--paper); border-radius: 22px 22px 0 0;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, .15);
-    transition: transform .35s cubic-bezier(.2, .9, .25, 1);
-  }
-  .share-open .sheet-bg { opacity: 1; }
-  .share-open .sheet { transform: translate(-50%, 0); }
-  .sheet[hidden], .sheet-bg[hidden] { display: none; }
-  .sheet-grip { width: 40px; height: 4px; margin: 0 auto 14px; border-radius: 2px; background: var(--line); }
-  .sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-  .sheet-head h2 { font-size: 17px; font-weight: 700; }
-  .sheet-close { width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--mist); color: var(--gray); cursor: pointer; display: grid; place-items: center; }
-  .sheet-close svg { width: 18px; height: 18px; }
-  .share-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-  .share-item {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    border: 0; background: none; cursor: pointer; text-decoration: none;
-    color: var(--ink); font-size: 12.5px;
-  }
-  .share-ico {
-    width: 52px; height: 52px; border-radius: 16px;
-    display: grid; place-items: center; color: #fff;
-    font: 700 22px system-ui, sans-serif; transition: transform .15s;
-  }
-  .share-item:active .share-ico { transform: scale(.92); }
-  .share-ico svg { width: 22px; height: 22px; }
 
   /* 넓은 화면(PC)에서는 가운데 한 장으로 */
   @media (min-width: 600px) {
@@ -189,7 +159,7 @@
   <main class="page">
     <div class="content">
       <header class="top">
-        <img class="logo" src="kb_logo.png" alt="KB국민은행">
+        <img class="logo" src="kb_logo.png?v=2026-11-21.1" alt="KB국민은행">
         <div class="weather" id="weather" role="img" hidden><span id="weatherIco" aria-hidden="true"></span><span id="weatherTemp" aria-hidden="true"></span></div>
       </header>
 
@@ -197,9 +167,9 @@
         <h1 class="name" id="name">나윤정</h1>
         <p class="role">시흥능곡지점 <strong>VIP팀장</strong></p>
         <ul class="certs" aria-label="보유 자격">
-          <li><img src="cert_cfp.png" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
-          <li><img src="cert_afpk.png" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
-          <li><img src="cert_arps.png" alt="ARPS" title="ARPS 은퇴설계전문가" width="68" height="67"></li>
+          <li><img src="cert_cfp.png?v=2026-11-21.1" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
+          <li><img src="cert_afpk.png?v=2026-11-21.1" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
+          <li><img src="cert_arps.png?v=2026-11-21.1" alt="ARPS" title="ARPS 은퇴설계전문가" width="68" height="67"></li>
         </ul>
       </section>
 
@@ -241,15 +211,6 @@
   </main>
   <div class="toast" id="toast" role="status"></div>
 
-  <div class="sheet-bg" id="sheetBg" hidden></div>
-  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
-    <div class="sheet-grip"></div>
-    <div class="sheet-head">
-      <h2 id="sheetTitle">명함 공유</h2>
-      <button class="sheet-close" id="sheetClose" aria-label="닫기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-    </div>
-    <div class="share-grid" id="shareGrid"></div>
-  </section>
 
 <script>
   const svg = d => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
@@ -339,68 +300,34 @@
   quoteNext.onclick = loadQuote;
   loadQuote();
 
-  // ── 공유 시트: 별도 앱 등록 없이 링크만으로 동작하는 공유처 ──
-  (() => {
-    const pageUrl = location.origin + location.pathname; // ?v= 같은 꼬리표 제거
-    const text = '나윤정 VIP팀장 (KB국민은행 시흥능곡지점) 명함';
-    const u = encodeURIComponent(pageUrl), t = encodeURIComponent(text), tu = encodeURIComponent(text + '\n' + pageUrl);
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-    const copy = async () => {
-      try { await navigator.clipboard.writeText(pageUrl); }
-      catch (e) { // 구형 브라우저 대비
-        const ta = Object.assign(document.createElement('textarea'), { value: pageUrl });
-        document.body.appendChild(ta); ta.select();
-        const ok = document.execCommand('copy'); ta.remove();
-        if (!ok) { toast('링크를 복사하지 못했습니다. 주소창의 링크를 길게 눌러 복사해 주세요'); return; }
-      }
-      close(); toast('링크를 복사했습니다');
-    };
-
-    const items = [
-      { name: '문자', bg: '#ffbc00', fg: '#26231f', ico: svg('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>'), href: (isIOS ? 'sms:&body=' : 'sms:?body=') + tu },
-      { name: '밴드', bg: '#00c73c', ico: 'b', href: 'https://band.us/plugin/share?body=' + tu + '&route=' + u, ext: 1 },
-      { name: '이메일', bg: '#60584c', ico: svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>'), href: 'mailto:?subject=' + t + '&body=' + tu },
-      { name: '링크 복사', bg: '#ece9e3', fg: '#60584c', ico: svg('<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>'), action: copy },
-    ];
-    if (navigator.share) items.push({
-      name: '더보기', bg: '#f5f4f1', fg: '#60584c',
-      ico: svg('<circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>'),
-      action: async () => { close(); try { await navigator.share({ title: text, text, url: pageUrl }); } catch (e) {} }
-    });
-
-    const grid = document.getElementById('shareGrid');
-    items.forEach(it => {
-      const el = document.createElement(it.href ? 'a' : 'button');
-      el.className = 'share-item';
-      if (it.href) { el.href = it.href; if (it.ext) { el.target = '_blank'; el.rel = 'noopener'; } el.addEventListener('click', () => close()); }
-      else { el.type = 'button'; el.addEventListener('click', it.action); }
-      const ico = document.createElement('span');
-      ico.className = 'share-ico'; ico.style.background = it.bg; ico.style.color = it.fg || '#fff';
-      ico.innerHTML = it.ico; // 위에서 직접 정의한 고정 문자열만 사용
-      const label = document.createElement('span'); label.textContent = it.name;
-      el.append(ico, label); grid.appendChild(el);
-    });
-
-    const sheet = document.getElementById('sheet'), bg = document.getElementById('sheetBg');
-    const shareBtn = document.getElementById('share');
-    let hideTimer;
-    const open = () => {
-      clearTimeout(hideTimer);
-      sheet.hidden = bg.hidden = false;
-      requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('share-open')));
-      document.getElementById('sheetClose').focus({ preventScroll: true });
-    };
-    function close() {
-      if (sheet.hidden) return;
-      document.body.classList.remove('share-open');
-      hideTimer = setTimeout(() => { sheet.hidden = bg.hidden = true; }, 300);
-      shareBtn.focus({ preventScroll: true });
+  // ── 공유: 명함 주소만 휴대폰 공유 메뉴로 보냄 (미지원 기기는 링크 복사) ──
+  document.getElementById('share').onclick = async () => {
+    const url = location.origin + location.pathname; // ?v= 같은 꼬리표 제거
+    if (navigator.share) {
+      try { await navigator.share({ url }); } catch (e) {}
+      return;
     }
-    shareBtn.onclick = open;
-    bg.onclick = close;
-    document.getElementById('sheetClose').onclick = close;
-    addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    try { await navigator.clipboard.writeText(url); }
+    catch (e) {
+      const ta = Object.assign(document.createElement('textarea'), { value: url });
+      document.body.appendChild(ta); ta.select();
+      const ok = document.execCommand('copy'); ta.remove();
+      if (!ok) { toast('링크를 복사하지 못했습니다. 주소창의 링크를 길게 눌러 복사해 주세요'); return; }
+    }
+    toast('링크를 복사했습니다');
+  };
+
+  // ── 최신 버전 확인: 휴대폰에 예전 페이지가 저장돼 있으면 새로 받아 한 번 다시 불러옴 ──
+  (async () => {
+    try {
+      const mine = document.querySelector('meta[name="build"]').content;
+      const res = await fetch(location.pathname, { cache: 'reload' }); // 저장본 무시하고 새로 받으며 저장본도 갱신
+      const live = ((await res.text()).match(/<meta name="build" content="([^"]+)"/) || [])[1];
+      if (!live || live === mine) return;
+      let tried = null;
+      try { tried = sessionStorage.getItem('reloadedFor'); sessionStorage.setItem('reloadedFor', live); } catch (e) {}
+      if (tried !== live) location.reload();
+    } catch (e) { /* 오프라인 등: 지금 화면 유지 */ }
   })();
 </script>
 </body>
