@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<meta name="build" content="2026-11-21.2">
+<meta name="build" content="2026-11-21.3">
 <title>나윤정 VIP팀장 · KB국민은행 시흥능곡지점</title>
 <meta name="description" content="KB국민은행 시흥능곡지점 VIP팀장 나윤정의 명함입니다. 전화 걸기, 연락처 저장, 지점 위치를 바로 확인할 수 있습니다.">
 <link rel="canonical" href="https://terrykosunny.github.io/namecard/">
@@ -76,6 +76,8 @@
   .market-name { font-weight: 600; color: var(--gray); }
   .market-chg.up { color: #d6372c; }   /* 국내 관례: 상승 빨강 */
   .market-chg.down { color: #2a62c9; } /* 하락 파랑 */
+  .market.flash { animation: flash 1.2s ease-out; }
+  @keyframes flash { from { background: #fff1c2; } to { background: transparent; } }
 
   .who { padding: 44px 24px 36px; }
   .name { font-size: 40px; line-height: 1.15; font-weight: 700; letter-spacing: .3em; margin-right: -.3em; }
@@ -165,7 +167,7 @@
   <main class="page">
     <div class="content">
       <header class="top">
-        <img class="logo" src="kb_logo.png?v=2026-11-21.2" alt="KB국민은행">
+        <img class="logo" src="kb_logo.png?v=2026-11-21.3" alt="KB국민은행">
         <div class="meta">
           <div class="weather" id="weather" role="img" hidden><span id="weatherIco" aria-hidden="true"></span><span id="weatherTemp" aria-hidden="true"></span></div>
           <div class="market" id="market" hidden><span class="market-name">S&amp;P 500</span> <span id="marketValue"></span> <span class="market-chg" id="marketChg"></span></div>
@@ -176,9 +178,9 @@
         <h1 class="name" id="name">나윤정</h1>
         <p class="role">시흥능곡지점 <strong>VIP팀장</strong></p>
         <ul class="certs" aria-label="보유 자격">
-          <li><img src="cert_cfp.png?v=2026-11-21.2" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
-          <li><img src="cert_afpk.png?v=2026-11-21.2" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
-          <li><img src="cert_arps.png?v=2026-11-21.2" alt="ARPS" title="ARPS 은퇴설계전문가" width="68" height="67"></li>
+          <li><img src="cert_cfp.png?v=2026-11-21.3" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
+          <li><img src="cert_afpk.png?v=2026-11-21.3" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
+          <li><img src="cert_arps.png?v=2026-11-21.3" alt="ARPS" title="ARPS 은퇴설계전문가" width="68" height="67"></li>
         </ul>
       </section>
 
@@ -282,12 +284,18 @@
   })();
 
   // ── S&P 500: GitHub Actions가 FRED에서 받아 둔 sp500.json(같은 사이트)을 읽음 ──
-  (async () => {
+  // 명함이 화면에 보이는 동안 1분마다 다시 확인하고, 값이 바뀌면 살짝 강조
+  let lastMarket = null;
+  const loadMarket = async () => {
     try {
       const res = await fetch('sp500.json?t=' + Date.now(), { cache: 'no-store' });
       if (!res.ok) throw new Error(res.status);
       const d = await res.json();
       if (typeof d.value !== 'number') throw new Error('no value');
+      const key = d.date + ':' + d.value;
+      if (key === lastMarket) return; // 그대로면 화면도 그대로
+      const changed = lastMarket !== null;
+      lastMarket = key;
       const num = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       document.getElementById('marketValue').textContent = num(d.value);
       const chg = document.getElementById('marketChg');
@@ -299,10 +307,14 @@
       box.title = 'S&P 500 ' + Number(m) + '/' + Number(day) + ' 종가 (FRED)';
       box.setAttribute('aria-label', box.title + ' ' + num(d.value) + ', ' + (up ? '상승 ' : down ? '하락 ' : '') + Math.abs(d.changePct).toFixed(2) + '%');
       box.hidden = false;
+      if (changed) { box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash'); }
     } catch (e) {
-      // 아직 데이터가 없거나 못 불러오면 표시하지 않음
+      // 못 불러오면 지금 표시를 그대로 둠 (처음부터 없으면 숨김 유지)
     }
-  })();
+  };
+  loadMarket();
+  setInterval(() => { if (document.visibilityState === 'visible') loadMarket(); }, 60 * 1000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') loadMarket(); });
 
   // ── 명언 ──
   const quoteNext = document.getElementById('quoteNext');
