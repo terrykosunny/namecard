@@ -1,10 +1,10 @@
 # FRED에서 S&P 500·VIX 종가를 받아 sp500.json·vix.json으로 저장 → 명함 페이지가 같은 사이트에서 읽음
 # (FRED는 브라우저 직접 호출을 막고, 키를 공개 페이지에 둘 수 없어서 이렇게 처리)
-name: 지수 업데이트 (S&P 500, VIX)
+name: 지수 업데이트 (S&P 500, VIX, KOSPI, 원달러)
 
 on:
   schedule:
-    - cron: "17 0,6,12,18 * * *" # 하루 4번 (FRED는 하루 한 번 전날 종가를 올림)
+    - cron: "17 0,7,12,18 * * *" # 하루 4번 (한국 9:17·16:17·21:17·03:17). FRED는 하루 한 번 전날 종가, KOSPI는 16:17에 당일 종가
   workflow_dispatch: {}          # Actions 탭에서 수동 실행
 
 permissions:
@@ -48,11 +48,34 @@ jobs:
           fetch SP500 sp500.json
           fetch VIXCLS vix.json
 
+      - name: Yahoo에서 KOSPI·원달러 환율 받기 (FRED에는 일별 자료가 없음)
+        run: |
+          set -euo pipefail
+          yahoo() { # $1=Yahoo 심볼(URL 인코딩), $2=저장 파일
+            curl -sf --retry 3 -A "Mozilla/5.0" -o raw.json               "https://query2.finance.yahoo.com/v8/finance/chart/$1?range=1d&interval=1d"
+            # 현재가(장중이면 실시간에 가까운 값)와 전 거래일 종가로 등락 계산, 날짜는 한국 시간 기준
+            jq '.chart.result[0].meta as $m
+                | if ($m.regularMarketPrice == null or $m.chartPreviousClose == null) then error("데이터 부족") else . end
+                | {
+                    date: (($m.regularMarketTime + 32400) | strftime("%Y-%m-%d")),
+                    value: ($m.regularMarketPrice * 100 | round / 100),
+                    prev: ($m.chartPreviousClose * 100 | round / 100),
+                    change: (($m.regularMarketPrice - $m.chartPreviousClose) * 100 | round / 100),
+                    changePct: ((($m.regularMarketPrice - $m.chartPreviousClose) / $m.chartPreviousClose * 10000) | round / 100),
+                    note: "기준",
+                    source: "Yahoo \($m.symbol)"
+                  }' raw.json > "$2"
+            rm raw.json
+            cat "$2"
+          }
+          yahoo "%5EKS11" kospi.json
+          yahoo "KRW%3DX" usdkrw.json
+
       - name: 바뀌었으면 커밋
         run: |
-          git add sp500.json vix.json
+          git add sp500.json vix.json kospi.json usdkrw.json
           if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "지수 종가 갱신 (S&P 500 $(jq -r .date sp500.json), VIX $(jq -r .date vix.json))"
+          git commit -m "지수 갱신 (S&P 500·VIX $(jq -r .date sp500.json), KOSPI·환율 $(jq -r .date kospi.json))"
           git push

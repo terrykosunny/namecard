@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<meta name="build" content="2026-11-21.4">
+<meta name="build" content="2026-11-21.5">
 <title>나윤정 VIP팀장 · KB국민은행 시흥능곡지점</title>
 <meta name="description" content="KB국민은행 시흥능곡지점 VIP팀장 나윤정의 명함입니다. 전화 걸기, 연락처 저장, 지점 위치를 바로 확인할 수 있습니다.">
 <link rel="canonical" href="https://terrykosunny.github.io/namecard/">
@@ -59,7 +59,7 @@
   @keyframes appear { from { opacity: 0; transform: translateY(10px); } }
 
   .top {
-    display: flex; align-items: center; justify-content: space-between;
+    display: flex; align-items: flex-start; justify-content: space-between;
     padding: 24px 24px 0;
   }
   .logo { height: 40px; display: block; }
@@ -167,11 +167,13 @@
   <main class="page">
     <div class="content">
       <header class="top">
-        <img class="logo" src="kb_logo.png?v=2026-11-21.4" alt="KB국민은행">
+        <img class="logo" src="kb_logo.png?v=2026-11-21.5" alt="KB국민은행">
         <div class="meta">
           <div class="weather" id="weather" role="img" hidden><span id="weatherIco" aria-hidden="true"></span><span id="weatherTemp" aria-hidden="true"></span></div>
           <div class="market" id="mkt-sp500" hidden><span class="market-name">S&amp;P 500</span> <span class="mv"></span> <span class="market-chg"></span></div>
           <div class="market" id="mkt-vix" hidden><span class="market-name">VIX</span> <span class="mv"></span> <span class="market-chg"></span></div>
+          <div class="market" id="mkt-kospi" hidden><span class="market-name">KOSPI</span> <span class="mv"></span> <span class="market-chg"></span></div>
+          <div class="market" id="mkt-usdkrw" hidden><span class="market-name">원/달러</span> <span class="mv"></span> <span class="market-chg"></span></div>
         </div>
       </header>
 
@@ -179,9 +181,9 @@
         <h1 class="name" id="name">나윤정</h1>
         <p class="role">시흥능곡지점 <strong>VIP팀장</strong></p>
         <ul class="certs" aria-label="보유 자격">
-          <li><img src="cert_cfp.png?v=2026-11-21.4" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
-          <li><img src="cert_afpk.png?v=2026-11-21.4" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
-          <li><img src="cert_arps.png?v=2026-11-21.4" alt="ARPS" title="ARPS 은퇴설계전문가" width="68" height="67"></li>
+          <li><img src="cert_cfp.png?v=2026-11-21.5" alt="CFP" title="CFP 국제공인재무설계사" width="151" height="113"></li>
+          <li><img src="cert_afpk.png?v=2026-11-21.5" alt="AFPK" title="AFPK 재무설계사" width="478" height="276"></li>
+          <li><img src="cert_arps.png?v=2026-11-21.5" alt="ARPS" title="ARPS 은퇴설계전문가" width="68" height="67"></li>
         </ul>
       </section>
 
@@ -289,6 +291,8 @@
   const tickers = [
     { file: 'sp500.json', box: 'mkt-sp500', name: 'S&P 500' },
     { file: 'vix.json', box: 'mkt-vix', name: 'VIX' },
+    { file: 'kospi.json', box: 'mkt-kospi', name: 'KOSPI' },
+    { file: 'usdkrw.json', box: 'mkt-usdkrw', name: '원/달러 환율' },
   ];
   const num = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const loadTicker = async t => {
@@ -309,7 +313,7 @@
       chg.textContent = (up ? '▲' : down ? '▼' : '') + pct;
       chg.className = 'market-chg' + (up ? ' up' : down ? ' down' : '');
       const [, m, day] = d.date.split('-');
-      box.title = t.name + ' ' + Number(m) + '/' + Number(day) + ' 종가 (FRED)';
+      box.title = t.name + ' ' + Number(m) + '/' + Number(day) + ' ' + (d.note || '종가') + ' (' + (d.source || '').split(' ')[0] + ')';
       box.setAttribute('aria-label', box.title + ' ' + num(d.value) + ', ' + (up ? '상승 ' : down ? '하락 ' : '') + pct);
       box.hidden = false;
       if (changed) { box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash'); }
