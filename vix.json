@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-20",
-  "value": 35.89,
-  "prev": 28.44,
-  "change": 7.45,
-  "changePct": 26.2,
+  "date": "2026-11-23",
+  "value": 26.62,
+  "prev": 35.89,
+  "change": -9.27,
+  "changePct": -25.83,
   "source": "FRED VIXCLS"
 }
