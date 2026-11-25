@@ -1,8 +1,8 @@
 {
-  "date": "2026-11-23",
-  "value": 7237.17,
-  "prev": 6910.39,
-  "change": 326.78,
-  "changePct": 4.73,
+  "date": "2026-11-24",
+  "value": 7201.09,
+  "prev": 7237.17,
+  "change": -36.08,
+  "changePct": -0.5,
   "source": "FRED SP500"
 }
