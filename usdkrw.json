@@ -1,9 +1,9 @@
 {
   "date": "2026-11-25",
-  "value": 1340.79,
-  "prev": 1342.02,
-  "change": -1.23,
-  "changePct": -0.09,
+  "value": 1343.6,
+  "prev": 1341.08,
+  "change": 2.52,
+  "changePct": 0.19,
   "note": "기준",
-  "source": "Yahoo USDKRW=X"
+  "source": "Yahoo KRW=X"
 }
